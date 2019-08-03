@@ -25,23 +25,15 @@ repositories {
 }
 
 dependencies {
-    
     implementation "org.springframework.boot:spring-boot-configuration-processor"
-   
-    compile "org.springframework.boot:spring-boot-starter"
-    compile 'org.springframework:spring-jms'
-    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
-    
-    
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation 'org.springframework:spring-jms'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version".toString()
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version".toString()
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1"
-    
-    compile 'ch.qos.logback:logback-classic:1.2.3'
-    compile 'org.apache.logging.log4j:log4j-api:2.8.2'
-    
-    compile 'com.ibm.mq:com.ibm.mq.allclient:9.1.1.0'
-    
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+    implementation 'org.apache.logging.log4j:log4j-api:2.8.2'
+    implementation 'com.ibm.mq:com.ibm.mq.allclient:9.1.1.0'
 }
 
 
