@@ -36,39 +36,6 @@ dependencies {
     implementation 'com.ibm.mq:com.ibm.mq.allclient:9.1.1.0'
 }
 
-
-
-//jacoco {
-//    toolVersion = "0.8.3"
-//    reportsDir = file("./reports")
-//}
-//test {
-//    jvmArgs = ["-Dparus.configuration.path=classpath:test",
-//               "-Dapplication.server.host=test"]
-//    jacoco {
-//        destinationFile = file("./reports/jacoco/test/jacocoTest.exec")
-//    }
-//    reports.junitXml.destination = file("./reports")
-//
-//}
-//jacocoTestReport {
-//    executionData = files("./reports/jacoco/test/jacocoTest.exec")
-//    classDirectories = files("./build/classes")
-//   // sourceDirectories = files("./src/main/kotlin")
-//
-//    reports {
-//        xml.enabled  true
-//        xml.destination("./reports/jacoco/test/jacocoTest.xml")
-//        html.enabled false
-//    }
-//}
-
-//sonarqube {
-//    properties {
-//        properties["sonar.junit.reportPaths"] = test.reports.junitXml.destination
-//    }
-//}
-
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
