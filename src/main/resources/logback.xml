@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+    <property name="CHANGE_LOG" value="${log.path}" />
+
+    <appender name="MQ" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${CHANGE_LOG}\\log\\mq.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${CHANGE_LOG}\\mq-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <!-- each should be at most 20MB, keep 60 days worth of history, but at most 500MB -->
+            <maxFileSize>30MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %level -  %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SOUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${CHANGE_LOG}\\log\\systemout.log</File>
+        <filter class = "ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${DEV_HOME}\\log\\systemout-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <!-- each should be at most 20MB, keep 60 days worth of history, but at most 500MB -->
+            <maxFileSize>5MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %level %logger{10} - %msg%n \r\n</pattern>
+        </encoder>
+    </appender>
+
+
+    <logger name = "MQLogger" level = "INFO" additivity="false">
+        <appender-ref ref="MQ" />
+    </logger>
+    <root level="INFO">
+        <appender-ref ref="SOUT" />
+    </root>
+</configuration>
