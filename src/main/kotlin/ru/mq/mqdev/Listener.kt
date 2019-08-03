@@ -27,7 +27,7 @@ class Listener(private val messageChannel: MessageChannel) : MessageListener {
     override fun onMessage(message: Message) = runBlocking(messageWorker) {
         when (message) {
             is TextMessage -> messageChannel.sendMessage(message.text).also {
-                log.debug("{}", "Входящее сообщение:\r\n${message.text}")
+                log.debug("{}", "Input message:\r\n${message.text}")
             }
             else -> log.info("{}", "Message type is unknown")
         }
