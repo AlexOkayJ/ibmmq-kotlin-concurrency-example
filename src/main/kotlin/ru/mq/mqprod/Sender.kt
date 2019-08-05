@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 @Component
 class Sender(private val jmsTemplate: JmsTemplate) {
 
-    @Value("\${ibm.mq.outQueue}")
+    @Value("\${ibm.mq.queue}")
     private lateinit var queue: String
 
     fun sendMessage(msg: String) {

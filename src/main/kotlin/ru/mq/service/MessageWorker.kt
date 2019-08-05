@@ -81,7 +81,9 @@ class MessageWorker(
      */
     private fun sendResult(resultMessage: String) {
         runCatching {
-            sender.sendMessage(resultMessage)
+            //In this example, we didn't have que for answer. If we start send message
+            //to sender out listener start read it cause its the same que
+//            sender.sendMessage(resultMessage)
         }.getOrElse { thr ->
             log.error("{}", "$thr")
         }
@@ -92,7 +94,7 @@ class MessageWorker(
         log.info("{}", "Create processing for messaging, workers count is: $workersNumber")
         val workChannel = Channel<String>()
 
-        val resultChannel = Channel<String>(1) // don't touch it or you can have a deadlock
+        val resultChannel = Channel<String>(1) // don't touch it or you can catch a deadlock
 
         repeat(workers) { worker(workChannel, resultChannel) }
         downloader(inMessages, workChannel, resultChannel)
