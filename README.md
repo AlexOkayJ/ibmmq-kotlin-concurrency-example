@@ -1,13 +1,14 @@
 # ibm-mq-kotlin-concurrency
 ### FOR WHAT
-I am backend developer and when I started using Kotlin, I constantly lacked examples of how it can be used for enterprise backend tasks.
-This example shows how you can use Kotlin and channels for asynchronous processing of IBM MQ messages in non-hierarchical CSP style, and of course you can replace it with another MQ manager or message broker like Kafka.
+As a backend developer, when starting using Kotlin, I always lacked examples of it's usage for enterprise backend tasks.
+Present example shows how the Kotlin can be used with coroutine channels for asynchronous processing of IBM MQ messages in non-hierarchical CSP style - Kotlin might be replaced with any other MQ manager or message broker like Kafka, of course.
 
-Main goal of this is use Kotlin non blocking coroutines for blocking tasks, when you have three tasks where every task need 5 second for have been done (insert to database, send to rest etc.) in typically way with consistent execute you need 15 second for this work if u use threads u need 5 second but you block threads and this is very expensive operation in our sample you need just 5 second for this and you don't block thread.
-And i think its great for messaging because usually when we work with some message system all messages are being processed in the same way, so we can process numerous messages per second by this way without care about memory overhead or block threads.
+Main goal is to show how Kotlin non-blocking coroutines can be used for blocking tasks, when you have three tasks, each of those needs 5 seconds to be done (insert to database, send to rest etc.), in a typical case of consistent execute you need 15 seconds for such work. If you use threads, you will only need 5 seconds, but you will be blocking your threads, which is a very expensive operation. In our sample you need just 5 seconds for such work without blocking any thread.
+In my opinion, this is a great method for messaging systems - we can process numerous messages per second, not caring about memory overhead or thread blocking, as opposed to processing all the messages the same way.
 
 ### USAGE
-For start this sample you need IBM MQ manager. You can take it from DockerHub as a docker image you can run a queue manager with the default configuration and a listener on port 1414 using the following command. :
+To start the sample you need IBM MQ manager - it can be taken from DockerHub as a docker image for start queue manager with a default configuration and a listener set up on port 1414 by the following command:
+
 ```sh
 docker run \
   --env LICENSE=accept \
@@ -17,14 +18,14 @@ docker run \
   --detach \
   ibmcom/mq
 ```
-for details see: <https://github.com/ibm-messaging/mq-container>
+More details here: <https://github.com/ibm-messaging/mq-container>
 
 ## RUN LISTENER
-For start project you need print gradle bootRun.
-You can see message "Hello world bro" print on you console every second.
+To start a project you need to print  `gradle bootRun`. 
+You can now see the "Hello world bro" message printed on your console every second.
 
 ## HOW IT WORKS 
-First we configured our listener in typical spring way, in this sample i added BackOff property for try to reconnect when we catch some troubles with network or our broker, so we will try to reconnect every 5 second. I recommend move recovery interval value to property file.
+First we a configuring our listener in a typical spring way. In this sample I'm adding a BackOff property to reconnect - by doing so, we will try to reconnect every 5 seconds if we catch any troubles with the network or brocker. I also recomend moving the recovery interval value to a property file.
 ```
 @Bean
 fun listenerFactory(configurer: DefaultJmsListenerContainerFactoryConfigurer, connectionFactory: ConnectionFactory): JmsListenerContainerFactory<*> {
@@ -35,25 +36,24 @@ fun listenerFactory(configurer: DefaultJmsListenerContainerFactoryConfigurer, co
         return factory
 }
 ```
-Also we have listener and sender configured to the same que, so i configured very simple sender from JmsTemplate bean and scheduled it to send message every second:
+We also have a listener and sender configured to the same que, so i configured very simple sender from JmsTemplate bean and scheduled it to send message every second:
 ```
 @Scheduled(fixedRate = 1000)
 fun task() = runBlocking {
         sender.sendMessage("Hello world bro")
 }
 ```
-It's quite simple part. 
+This part is quite simple.
 
-Interesting is our MessageWorker class which have three channels:
-1) inMessageChannel - we send message to this channel from listener
-2) workerChannel - channel for do some work with message
-3) resultChannel - channel for send work result
+What's interesting is our MessageWorker class which have three channels:
+1) inMessageChannel - used to receive message from listener
+2) workerChannel - used to proceed the message
+3) resultChannel - used to send the processed message
 
-First of all we added our thread pool I moved number of threads and workers (coroutines) to properties file for convince.
+First of all we added our thread pool - I moved number of threads and workers (coroutines) to a properties file for convince.
 
-MessageProcess is function which initialize our workers and downloader. 
-We repeat n times worker function for initialize them, opposite to threads we can initialize hundreds of worker functions, 
-and don't care about memory overhead. I wrote comments for better understand the idea.
+MessageProcess is a function initializing our workers and downloader. 
+In this case we repeat the worker function n times to initialize our worker process in this case n is count of concurrent process - as oppose to using threads, we can initialize hundreds of worker functions not worrying of memory overhead. See comments to understand the idea better.
 ```
 //Select message and send them to channel or if it income from resultChannel
 //we can answer to our MQ manager for example.
@@ -97,6 +97,5 @@ private fun CoroutineScope.messageProcess(inMessages: ReceiveChannel<String>) {
 ```    
 
 #### Also
-For understand how MessageWorker class is work
-I  recommend watch Roman Elizarov talk about this pattern from KotlinConf 2018  `https://www.youtube.com/watch?v=a3agLJQ6vt8`
-and after read this Roman article ` https://medium.com/@elizarov/deadlocks-in-non-hierarchical-csp-e5910d137cc`
+For better understanding of MessageWorker class functioning I recommend watching Roman Elizarov's lecture on this topic from KotlinConf 2018  `https://www.youtube.com/watch?v=a3agLJQ6vt8`
+and also his article ` https://medium.com/@elizarov/deadlocks-in-non-hierarchical-csp-e5910d137cc`
