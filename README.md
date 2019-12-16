@@ -1,4 +1,5 @@
 <meta name="google-site-verification" content="t03ICop6NhPIuqR21x49l2cstXGqyEi8xfRYhFjvMUw" />
+
 # ibm-mq-kotlin-concurrency
 ### FOR WHAT
 As a backend developer, when starting using Kotlin, I always lacked examples of it's usage for enterprise backend tasks.
